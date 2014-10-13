@@ -63,31 +63,44 @@ in your main function, resulting in
       nopts = 3
     };
     
+    typedef struct {
+      char names[nopts][256];
+      union {
+        struct {
+           int stars, bunnies, dogs;
+        };
+        int v[nopts];
+      };
+    } opts2struct_t;
+    
     opts2struct_t ops2s;
     
-    ops2s.stars = 100;
-    ops2s.bunnies = 7;
-    ops2s.dogs = 4;
-    
-    ops2s.v[0] = 100;
-    ops2s.v[1] = 7;
-    ops2s.v[2] = 4;
+    ops2s.names[stars] = "stars";
+    ops2s.names[bunnies] = "bunnies";
+    ops2s.names[dogs] = "dogs";
+
+    /* equivalently:  */
     
     ops2s.names[0] = "stars";
     ops2s.names[1] = "bunnies";
     ops2s.names[2] = "dogs";
     
-    /* equivalently ... */
+    /* given the example command line input: */
+    
+    ops2s.stars = 100;
+    ops2s.bunnies = 7;
+    ops2s.dogs = 4;
     
     ops2s.v[stars] = 100;
     ops2s.v[bunnies] = 7;
     ops2s.v[dogs] = 4;
     
-    ops2s.names[stars] = "stars";
-    ops2s.names[bunnies] = "bunnies";
-    ops2s.names[dogs] = "dogs";
-  
-
+    /* equivalently: */
+    
+    ops2s.v[0] = 100;
+    ops2s.v[1] = 7;
+    ops2s.v[2] = 4;
+    
 Note that the values are limited to ints
 
 example
