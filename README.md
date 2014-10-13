@@ -77,6 +77,9 @@ in your main function, the following will be automatically generated:
     ops2s.names[1] = "bunnies";
     ops2s.names[2] = "dogs";
 
+Two features of the [C preprocessor](https://gcc.gnu.org/onlinedocs/cpp/index.html#Top) make this possible:
+- [stringification](https://gcc.gnu.org/onlinedocs/cpp/Stringification.html#Stringification)
+- [variadic macros](https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html#Variadic-Macros)
 
 example command-line input
 --------------------------
