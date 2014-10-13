@@ -56,32 +56,36 @@ provided you have
 
 in your main function, resulting in
 
-    stars = 0
-    bunnies = 1
-    dogs = 2
-    nopts = 3
+    enum {
+      stars = 0
+      bunnies = 1
+      dogs = 2
+      nopts = 3
+    };
     
-    opts2struct_t ops2s
+    opts2struct_t ops2s;
     
-    ops2s.stars = 100
-    ops2s.bunnies = 7
-    ops2s.dogs = 4
+    ops2s.stars = 100;
+    ops2s.bunnies = 7;
+    ops2s.dogs = 4;
     
-    ops2s.v[0] = 100
-    ops2s.v[1] = 7
-    ops2s.v[2] = 4
+    ops2s.v[0] = 100;
+    ops2s.v[1] = 7;
+    ops2s.v[2] = 4;
     
-    ops2s.names[0] = "stars"
-    ops2s.names[1] = "bunnies"
-    ops2s.names[2] = "dogs"
+    ops2s.names[0] = "stars";
+    ops2s.names[1] = "bunnies";
+    ops2s.names[2] = "dogs";
     
-    ops2s.v[stars] = 100
-    ops2s.v[bunnies] = 7
-    ops2s.v[dogs] = 4
+    /* equivalently ... */
     
-    ops2s.names[stars] = "stars"
-    ops2s.names[bunnies] = "bunnies"
-    ops2s.names[dogs] = "dogs"
+    ops2s.v[stars] = 100;
+    ops2s.v[bunnies] = 7;
+    ops2s.v[dogs] = 4;
+    
+    ops2s.names[stars] = "stars";
+    ops2s.names[bunnies] = "bunnies";
+    ops2s.names[dogs] = "dogs";
   
 
 Note that the values are limited to ints
