@@ -81,6 +81,9 @@ in your main function, the following will be automatically generated:
 example command-line input
 --------------------------
 
+- order is not important
+- no limit on number of key-value pairs (except shell limits)
+
 You can parse command-lines of the form:
 
     command stars=100 bunnies=7 dogs=4
@@ -88,9 +91,6 @@ You can parse command-lines of the form:
 or the more conventional:
 
     command --stars=100 --bunnies=7 --dogs=4
-
-- order is not important
-- no limit on number of key-value pairs (except shell limits)
 
     /* given the example command line input: */
 
