@@ -99,10 +99,13 @@ resulting in:
     ops2s.stars = 100;
     ops2s.bunnies = 7;
     ops2s.dogs = 4;
+    
     ops2s.v[stars] = 100;
     ops2s.v[bunnies] = 7;
     ops2s.v[dogs] = 4;
+    
     /* equivalently */
+    
     ops2s.v[0] = 100;
     ops2s.v[1] = 7;
     ops2s.v[2] = 4;
