@@ -115,8 +115,9 @@ example
 ------
 See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.c) file for an example.
 
-issues:
+limitations:
 ------
+opts2struct is intentionally simple, and is not meant to replace [getopt](http://en.wikipedia.org/wiki/Getopt): 
 - the values are limited to ints
 - must have equal sign separating key and value
 - not spaces (`--bunnies 7` won't work)
