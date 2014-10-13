@@ -54,7 +54,7 @@ provided you have
 
     OPTS2STRUCT(argc, argv, stars, bunnies, dogs);
 
-in your main function, resulting in the following being automatically generated:
+in your main function, the following will be automatically generated:
 
     enum {
       stars = 0
@@ -109,6 +109,6 @@ See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.
 
 issues:
 ------
+- the values are limited to ints
 - must have equal sign separating key and value
 - not spaces (`--bunnies 7` won't work)
-
