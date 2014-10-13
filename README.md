@@ -39,17 +39,6 @@ the arrays work since you have the following enums:
     key3 = 2,
     nopts = 3
 
-You can parse command-lines of the form:
-
-    command stars=100 bunnies=7 dogs=4
-
-or the more conventional:
-
-    command --stars=100 --bunnies=7 --dogs=4
-
-- order is not important
-- no limit on number of key-value pairs (except shell limits)
-
 technical details
 -----------------
 
@@ -87,25 +76,36 @@ in your main function, the following will be automatically generated:
     ops2s.names[0] = "stars";
     ops2s.names[1] = "bunnies";
     ops2s.names[2] = "dogs";
-    
+
+
+example command-line input
+--------------------------
+
+You can parse command-lines of the form:
+
+    command stars=100 bunnies=7 dogs=4
+
+or the more conventional:
+
+    command --stars=100 --bunnies=7 --dogs=4
+
+- order is not important
+- no limit on number of key-value pairs (except shell limits)
+
     /* given the example command line input: */
-    
+
     ops2s.stars = 100;
     ops2s.bunnies = 7;
     ops2s.dogs = 4;
-    
     ops2s.v[stars] = 100;
     ops2s.v[bunnies] = 7;
     ops2s.v[dogs] = 4;
-    
-    /* equivalently: */
-    
+    /* equivalently */
     ops2s.v[0] = 100;
     ops2s.v[1] = 7;
     ops2s.v[2] = 4;
     
-Note that the values are limited to ints
-
+    
 example
 ------
 See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.c) file for an example.
