@@ -50,6 +50,9 @@ or the more conventional:
 - order is not important
 - no limit on number of key-value pairs (except shell limits)
 
+technical details
+-----------------
+
 provided you have 
 
     OPTS2STRUCT(argc, argv, stars, bunnies, dogs);
