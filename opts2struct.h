@@ -40,8 +40,8 @@ SOFTWARE.
       };                                                                       \
       int v[nopts];                                                            \
     };                                                                         \
-  } ops2struct_t;                                                              \
-  ops2struct_t ops2s = {0};                                                    \
+  } opts2struct_t;                                                              \
+  opts2struct_t ops2s = {0};                                                    \
   do {                                                                         \
     char *word, *ctx, *space, tmp[256], *optstring = #opts;                    \
     strcpy(tmp, optstring);                                                    \
