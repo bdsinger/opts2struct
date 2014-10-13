@@ -61,6 +61,8 @@ in your main function, resulting in
     dogs = 2
     nopts = 3
     
+    opts2struct_t ops2s
+    
     ops2s.stars = 100
     ops2s.bunnies = 7
     ops2s.dogs = 4
@@ -86,7 +88,7 @@ Note that the values are limited to ints
 
 example
 ------
-See the example.c file for an example.
+See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.c) file for an example.
 
 issues:
 ------
