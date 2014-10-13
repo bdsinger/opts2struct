@@ -92,6 +92,8 @@ or the more conventional:
 
     command --stars=100 --bunnies=7 --dogs=4
 
+resulting in:
+
     /* given the example command line input: */
 
     ops2s.stars = 100;
