@@ -120,3 +120,7 @@ issues:
 - the values are limited to ints
 - must have equal sign separating key and value
 - not spaces (`--bunnies 7` won't work)
+- no mechanism for default values
+- opts are matched if they are a subset of args: assumes unique word args
+- no attempt to differentiate between option and non-option area of command-line (ie no `--`)
+- no flag support (ie no `-a -b` or `-ab`)
