@@ -79,7 +79,9 @@ in your main function, the following will be automatically generated:
 
 Two features of the [C preprocessor](https://gcc.gnu.org/onlinedocs/cpp/index.html#Top) make this possible:
 - [stringification](https://gcc.gnu.org/onlinedocs/cpp/Stringification.html#Stringification)
+    - see `#opts` on [line 46 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L46) where it is expanded and parsed into the `.names[]` array field
 - [variadic macros](https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html#Variadic-Macros)
+    - see `opts...` on [line 33 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L33), and [lines 34](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L34) and [39](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L39)  where it expands into the enums, and struct fields respectively.
 
 example command-line input
 --------------------------
