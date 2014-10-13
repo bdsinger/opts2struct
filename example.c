@@ -29,6 +29,13 @@
 
 int main(int argc, const char *argv[]) {
 
+  /* run command-line like so (order of key-value pairs not important, and
+     the only restriction on values is that they be integers):
+
+      command subjects=10 voxels=40000 blocks=10 trs=12 offsets=5
+
+   */
+
   OPTS2STRUCT(argc, argv, subjects, voxels, blocks, trs, offsets);
 
   printf("in a loop:\n");
