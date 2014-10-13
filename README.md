@@ -54,7 +54,7 @@ provided you have
 
     OPTS2STRUCT(argc, argv, stars, bunnies, dogs);
 
-in your main function, resulting in
+in your main function, resulting in the following being automatically generated:
 
     enum {
       stars = 0
