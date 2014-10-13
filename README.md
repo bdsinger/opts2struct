@@ -80,8 +80,11 @@ in your main function, the following will be automatically generated:
 Two features of the [C preprocessor](https://gcc.gnu.org/onlinedocs/cpp/index.html#Top) make this possible:
 - [stringification](https://gcc.gnu.org/onlinedocs/cpp/Stringification.html#Stringification)
     - see `#opts` on [line 46 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L46) where it is expanded and parsed into the `.names[]` array field
-- [variadic macros](https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html#Variadic-Macros)
+- [named variadic macros](https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html#Variadic-Macros)
     - see `opts...` on [line 33 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L33), and [lines 34](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L34) and [39](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L39)  where it expands into the enums, and struct fields respectively.
+    - while variadic macros are part of the C99 standard, the _named_ variant of variadic macros is a GNU extension supported on Linux and OS X but not some other platforms-- you'd need to change `opts...` to `...` in Visual C++ as well as replace `opts` in the body with `__VA_ARGS__`
+
+The code also uses anonymous structs and unions, which are part of the C11 standard, but work on earlier versions of the gcc compiler as an extension. Without them, `ops2s.stars` would become something like `ops2s.s.stars` and `ops2s.v[stars]` would also need an extra field for the union, say `ops2s.u.v[stars]`. Compiling on pre-C11 compilers is left as an exercise for the reader.
 
 example command-line input
 --------------------------
@@ -130,3 +133,4 @@ opts2struct is intentionally simple, and is not meant to replace [getopt](http:/
 - opts are matched if they are a subset of args: assumes unique word args
 - no attempt to differentiate between option and non-option area of command-line (ie no `--`)
 - no flag support (ie no `-a -b` or `-ab`)
+- incompatible with Visual C++, but should work with minor tweaks (see above)
