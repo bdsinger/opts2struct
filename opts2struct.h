@@ -41,7 +41,7 @@ SOFTWARE.
       int v[nopts];                                                            \
     };                                                                         \
   } opts2struct_t;                                                             \
-  opts2struct_t ops2s = {0};                                                   \
+  opts2struct_t ops2s;                                                         \
   do {                                                                         \
     char *word, *ctx, *space, tmp[256], *optstring = #opts;                    \
     strcpy(tmp, optstring);                                                    \
@@ -53,6 +53,7 @@ SOFTWARE.
     }                                                                          \
     for (i = 1; i < argc; ++i) {                                               \
       for (j = 0; j < nopts; ++j) {                                            \
+        ops2s.v[j] = OPTS2EMPTY;                                               \
         if (strstr(argv[i], ops2s.names[j])) {                                 \
           ops2s.v[j] = atoi(strrchr(argv[i], '=') + 1);                        \
           break;                                                               \
@@ -60,5 +61,7 @@ SOFTWARE.
       }                                                                        \
     }                                                                          \
   } while (0)
+
+#define OPTS2EMPTY -999
 
 #endif // H_OPTS2STRUCT
