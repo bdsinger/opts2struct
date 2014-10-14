@@ -51,9 +51,10 @@ SOFTWARE.
       strcpy(ops2s.names[i++],                                                 \
              (space = strrchr(word, ' ')) ? space + 1 : word);                 \
     }                                                                          \
+    for (j = 0; j < nopts; ++j)                                                \
+      ops2s.v[j] = OPTS2EMPTY;                                                 \
     for (i = 1; i < argc; ++i) {                                               \
       for (j = 0; j < nopts; ++j) {                                            \
-        ops2s.v[j] = OPTS2EMPTY;                                               \
         if (strstr(argv[i], ops2s.names[j])) {                                 \
           ops2s.v[j] = atoi(strrchr(argv[i], '=') + 1);                        \
           break;                                                               \
