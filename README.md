@@ -70,7 +70,7 @@ command-line `command stars=100 bunnies=7 dogs=4`:
 
 Two features of the [C preprocessor](https://gcc.gnu.org/onlinedocs/cpp/index.html#Top) make this possible:
 - [stringification](https://gcc.gnu.org/onlinedocs/cpp/Stringification.html#Stringification)
-    - see `#opts` on [line 43 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L43) (later used by `opts2struct_create()` in [opts2struct.c](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.c)
+    - see `#opts` on [line 43 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L43) (later used by `opts2struct_create()` in [opts2struct.c](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.c) )
 - [named variadic macros](https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html#Variadic-Macros)
     - see `opts...` on [line 32 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L32), and [lines 33](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L33) and [38](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L38)  where it expands into the enums, and struct fields respectively.
 	    - while variadic macros are part of the C99 standard, the _named_ variant of variadic macros is a GNU extension supported on Linux and OS X but not some other platforms-- you'd need to change `opts...` to `...` in Visual C++ as well as replace `opts` in the body with `__VA_ARGS__`
