@@ -39,7 +39,7 @@ int main(int argc, const char *argv[]) {
   /* run command-line like so (order of key-value pairs not important, and
      the only restriction on values is that they be integers):
 
-   command subjects=10 voxels=40000 blocks=10 trs=12 offsets=5
+   command stars=100 bunnies=7 dogs=4
 
    Note that the current version of the parsing code in opts2struct.c just
    looks for the opts name *within* the command line arguments, so you should
@@ -52,7 +52,7 @@ int main(int argc, const char *argv[]) {
        -> because both "s" and "ss" contain an "s"!
 
    WON'T WORK:
-    command subjects 10 voxels 4000
+    command bunnies 10 dogs 4000
 
        -> because an equals sign '=' must be used to set the value,
           not spaces!
