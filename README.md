@@ -85,14 +85,16 @@ Limitations:
 ------
 opts2struct is intentionally simple, and is not meant to replace [getopt](http://en.wikipedia.org/wiki/Getopt): 
 - the values are limited to ints
-- must have equal sign separating key and value
-- not spaces (`-bunnies 7` won't work)
+- incompatible with Visual C++, but should work with minor tweaks (see above)
+
+The following limitations apply to the supplied helper functions, which are provided for convenience only:
+- requires equal sign separating key and value
+    - not spaces (`-bunnies 7` won't work)
+- no flag support (ie no `-a -b` or `-ab`)
 - no mechanism for default values
     - but you can check for items set to OPTS2EMPTY, meaning unset, then set them to defaults
 - opts are matched if they form __any substring__ of __any element of argv[]__!
     - use long unambiguous option names that do not contain each other as substrings!
     - if "dog" is an option, then it matches both "dog=3" and "bigdog=4" command line arguments
 - no attempt to differentiate between option and non-option area of command-line (ie no `--`)
-- no flag support (ie no `-a -b` or `-ab`)
-- incompatible with Visual C++, but should work with minor tweaks (see above)
 
