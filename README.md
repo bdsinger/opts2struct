@@ -55,7 +55,7 @@ After calling `opts2struct_create()` you'll have the following set:
     ops2s->v[bunnies]     /*  OPTS2EMPTY */
     ops2s->v[dogs]        /*  OPTS2EMPTY */
 
-Note that you can also just loop over `ops2s->v[i]` using `nopts` in a for-loop, which requires no kknowledge of the option names (outside of `myopts2struct.h`) in your code.
+Note that you can also just loop over `ops2s->v[i]` using `nopts` in a for-loop, which requires no knowledge of the option names (outside of `myopts2struct.h`).
 
 After calling `opts2struct_parseopts(ops2s, argc, argv)` with the
 command-line `command stars=100 bunnies=7 dogs=4`:
