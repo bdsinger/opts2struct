@@ -84,7 +84,7 @@ Two features of the [C preprocessor](https://gcc.gnu.org/onlinedocs/cpp/index.ht
     - see `opts...` on [line 33 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L33), and [lines 34](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L34) and [39](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L39)  where it expands into the enums, and struct fields respectively.
     - while variadic macros are part of the C99 standard, the _named_ variant of variadic macros is a GNU extension supported on Linux and OS X but not some other platforms-- you'd need to change `opts...` to `...` in Visual C++ as well as replace `opts` in the body with `__VA_ARGS__`
 
-The code also uses anonymous structs and unions, which are part of the C11 standard, but work on earlier versions of the gcc compiler as an extension. Without them, `ops2s.stars` would become something like `ops2s.u.s.stars` and `ops2s.v[stars]` would also need an extra field for the union, say `ops2s.u.v[stars]`. Ugly. Compiling on pre-C11 compilers is left as an exercise for the reader.
+The code also uses [anonymous structs and unions](https://gcc.gnu.org/onlinedocs/gcc/Unnamed-Fields.html), which are part of the C11 standard, but work on earlier versions of the gcc compiler as an extension. Without them, `ops2s.stars` would become something like `ops2s.u.s.stars` and `ops2s.v[stars]` would also need an extra field for the union, say `ops2s.u.v[stars]`. Ugly. Compiling on pre-C11 compilers is left as an exercise for the reader.
 
 example command-line input
 --------------------------
