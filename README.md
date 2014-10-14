@@ -3,19 +3,19 @@ opts2struct
 
 A short C macro and two helper functions for creating an opts struct from argv
 
-- step 1: provide your option names in `myopts2struct.h`
+- Step 1: provide your option names in `myopts2struct.h`
 
     `OPTS2STRUCT(key1, key2, key3, ...)`
 
-- step 2: call helper functions to initialize and then parse `argv[]`:
+- Step 2: call helper functions to initialize and then parse `argv[]`:
 
     `struct opts2struct_t *ops2s = opts2struct_create();`
     `opts2struct_parseopts(myopts, argc, argv);`
 
-technical details
+Technical details
 -----------------
 
-provided you have edited `myopts2struct.h` to contain:
+Provided you have edited `myopts2struct.h` to contain:
 
     OPTS2STRUCT(stars, bunnies, dogs)
 
@@ -41,9 +41,9 @@ then the following will be automatically generated:
     static inline const char *opts2s_allopts(void) { return "stars, bunnies, dogs"; }
 
 
-the `opts2s_allopts()` function returns the stringified options, split by `opts2struct_create()` when filling out the `names[]` array
+The `opts2s_allopts()` function returns the stringified options, split by `opts2struct_create()` when filling out the `names[]` array
 
-after calling `opts2struct_create()` you'll have the following set:
+After calling `opts2struct_create()` you'll have the following set:
     
     ops2s->names[stars]   /*  "stars"   */
     ops2s->names[bunnies] /*  "bunnies" */
@@ -55,7 +55,9 @@ after calling `opts2struct_create()` you'll have the following set:
     ops2s->v[bunnies]     /*  OPTS2EMPTY */
     ops2s->v[dogs]        /*  OPTS2EMPTY */
 
-after calling `opts2struct_parseopts(ops2s, argc, argv)` with the
+Note that you can also just loop over `ops2s->v[i]` using `nopts` in a for-loop, which requires no kknowledge of the option names (outside of `myopts2struct.h`) in your code.
+
+After calling `opts2struct_parseopts(ops2s, argc, argv)` with the
 command-line `command stars=100 bunnies=7 dogs=4`:
 
     ops2s->stars          /*  100 */
@@ -74,11 +76,11 @@ Two features of the [C preprocessor](https://gcc.gnu.org/onlinedocs/cpp/index.ht
 
 The code also uses [anonymous structs and unions](https://gcc.gnu.org/onlinedocs/gcc/Unnamed-Fields.html), which are part of the C11 standard, but work on earlier versions of the gcc compiler as an extension. Without them, `ops2s.stars` would become something like `ops2s.u.s.stars` and `ops2s.v[stars]` would also need an extra field for the union, say `ops2s.u.v[stars]`. Ugly. Compiling on pre-C11 compilers is left as an exercise for the reader.
 
-example
+Example
 ------
 See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.c) file for an example.
 
-limitations:
+Limitations:
 ------
 opts2struct is intentionally simple, and is not meant to replace [getopt](http://en.wikipedia.org/wiki/Getopt): 
 - the values are limited to ints
@@ -92,3 +94,4 @@ opts2struct is intentionally simple, and is not meant to replace [getopt](http:/
 - no attempt to differentiate between option and non-option area of command-line (ie no `--`)
 - no flag support (ie no `-a -b` or `-ab`)
 - incompatible with Visual C++, but should work with minor tweaks (see above)
+
