@@ -10,6 +10,7 @@ A short C macro and two helper functions for creating an opts struct from argv
 - Step 2: call helper functions to initialize and then parse `argv[]`:
 
     `struct opts2struct_t *ops2s = opts2struct_create();`
+
     `opts2struct_parseopts(myopts, argc, argv);`
 
 Technical details
