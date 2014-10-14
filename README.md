@@ -1,7 +1,7 @@
 opts2struct
 ===========
 
-A 30-line C macro that builds and fills a struct from a set of key=integer_value command line options.
+A 31-line C macro that builds and fills a struct from a set of key=integer_value command line options.
 
 
 In your main file, include "opts2struct.h" and in the main function add a single line:
