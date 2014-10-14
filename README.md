@@ -1,124 +1,79 @@
 opts2struct
 ===========
 
-A 32-line C macro that builds and fills a struct from a set of key=integer_value command line options.
+A short C macro and two helper functions for creating an opts struct from argv
 
+- step 1: provide your option names in `myopts2struct.h`
 
-In your main file, include "opts2struct.h" and in the main function add a single line:
+    OPTS2STRUCT(key1, key2, key3, ...);
 
-    OPTS2STRUCT(argc, argv, key1, key2, key3);
+- step 2: call helper functions to initialize and then parse `argv[]`:
 
-You'll now have the following available to you (local to your main function):
-
-
-struct fields:
---------------
-
-access values via key names:
-
-    ops2s.key1
-    ops2s.key2
-    ops2s.key3
-
-or via a value array (good in loops):
-
-    ops2s.v[key1]
-    ops2s.v[key2]
-    ops2s.v[key3]
-
-there is also a names array of key names:
-
-    ops2s.names[key1]
-    ops2s.names[key2]
-    ops2s.names[key3]
-
-the arrays work since you have the following enums:
-
-    key1 = 0,
-    key2 = 1,
-    key3 = 2,
-    nopts = 3
+    struct opts2struct_t *ops2s = opts2struct_create();
+    opts2struct_parseopts(myopts, argc, argv);
 
 technical details
 -----------------
 
-provided you have 
+provided you have edited `myopts2struct.h` to contain:
 
-    OPTS2STRUCT(argc, argv, stars, bunnies, dogs);
+    OPTS2STRUCT(stars, bunnies, dogs);
 
-in your main function, the following will be automatically generated:
+then the following will be automatically generated:
 
     enum {
-      stars = 0
-      bunnies = 1
-      dogs = 2
+      stars = 0,
+      bunnies = 1,
+      dogs = 2,
       nopts = 3
     };
     
-    typedef struct {
-      char names[nopts][256];
+    struct opts2struct_t {
       union {
+        int v[nopts];
         struct {
            int stars, bunnies, dogs;
         };
-        int v[nopts];
       };
-    } opts2struct_t;
-    
-    opts2struct_t ops2s;
-    
-    ops2s.names[stars] = "stars";
-    ops2s.names[bunnies] = "bunnies";
-    ops2s.names[dogs] = "dogs";
+      const char* names[nopts];
+    };
 
-    /* equivalently:  */
+    static inline const char *opts2s_allopts(void) { return "stars, bunnies, dogs"; }
+
+
+    - the opts2s_allopts() function is split by opts2struct_create() when filling out the names[] array
+
+after calling `opts2struct_create()` you'll have the following set:
     
-    ops2s.names[0] = "stars";
-    ops2s.names[1] = "bunnies";
-    ops2s.names[2] = "dogs";
+    ops2s->names[stars]   /*  "stars"   */
+    ops2s->names[bunnies] /*  "bunnies" */
+    ops2s->names[dogs]    /*  "dogs"    */
+    ops2s->stars          /*  OPTS2EMPTY */
+    ops2s->bunnies        /*  OPTS2EMPTY */
+    ops2s->dogs           /*  OPTS2EMPTY */
+    ops2s->v[stars]       /*  OPTS2EMPTY */
+    ops2s->v[bunnies]     /*  OPTS2EMPTY */
+    ops2s->v[dogs]        /*  OPTS2EMPTY */
+
+after calling `opts2struct_parseopts(ops2s, argc, argv)` with the
+command-line `command stars=100 bunnies=7 dogs=4`:
+
+    ops2s->stars          /*  100 */
+    ops2s->bunnies        /*  7 */
+    ops2s->dogs           /*  4 */
+    ops2s->v[stars]       /*  100 */
+    ops2s->v[bunnies]     /*  7 */
+    ops2s->v[dogs]        /*  4 */
 
 Two features of the [C preprocessor](https://gcc.gnu.org/onlinedocs/cpp/index.html#Top) make this possible:
 - [stringification](https://gcc.gnu.org/onlinedocs/cpp/Stringification.html#Stringification)
-    - see `#opts` on [line 46 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L46) where it is expanded and parsed into the `.names[]` array field
+    - see `#opts` on [line 41 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L41) (later used by `opts2struct_create()` in [opts2struct.c](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.c)
 - [named variadic macros](https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html#Variadic-Macros)
-    - see `opts...` on [line 33 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L33), and [lines 34](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L34) and [39](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L39)  where it expands into the enums, and struct fields respectively.
+    - see `opts...` on [line 30 of opts2struct.h](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L30), and [lines 31](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L31) and [36](https://github.com/bdsinger/opts2struct/blob/master/opts2struct.h#L36)  where it expands into the enums, and struct fields respectively.
     - while variadic macros are part of the C99 standard, the _named_ variant of variadic macros is a GNU extension supported on Linux and OS X but not some other platforms-- you'd need to change `opts...` to `...` in Visual C++ as well as replace `opts` in the body with `__VA_ARGS__`
 
 The code also uses [anonymous structs and unions](https://gcc.gnu.org/onlinedocs/gcc/Unnamed-Fields.html), which are part of the C11 standard, but work on earlier versions of the gcc compiler as an extension. Without them, `ops2s.stars` would become something like `ops2s.u.s.stars` and `ops2s.v[stars]` would also need an extra field for the union, say `ops2s.u.v[stars]`. Ugly. Compiling on pre-C11 compilers is left as an exercise for the reader.
 
-example command-line input
---------------------------
-
-- order is not important
-- no limit on number of key-value pairs (except shell limits)
-
-You can parse command-lines of the form:
-
-    command stars=100 bunnies=7 dogs=4
-
-or the more conventional:
-
-    command --stars=100 --bunnies=7 --dogs=4
-
-resulting in:
-
-    /* given the example command line input: */
-
-    ops2s.stars = 100;
-    ops2s.bunnies = 7;
-    ops2s.dogs = 4;
-    
-    ops2s.v[stars] = 100;
-    ops2s.v[bunnies] = 7;
-    ops2s.v[dogs] = 4;
-    
-    /* equivalently */
-    
-    ops2s.v[0] = 100;
-    ops2s.v[1] = 7;
-    ops2s.v[2] = 4;
-    
-    
 example
 ------
 See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.c) file for an example.
@@ -131,7 +86,9 @@ opts2struct is intentionally simple, and is not meant to replace [getopt](http:/
 - not spaces (`--bunnies 7` won't work)
 - no mechanism for default values
     - but you can check for items set to OPTS2EMPTY, meaning unset, then set them to defaults
-- opts are matched if they are a subset of args: assumes unique word args
+- opts are matched if they form __any substring__ of __any element of argv[]__!
+    - use long unambiguous option names that do not contain each other as substrings!
+    - if "dog" is an option, then it matches both "dog=3" and "bigdog=4" command line arguments
 - no attempt to differentiate between option and non-option area of command-line (ie no `--`)
 - no flag support (ie no `-a -b` or `-ab`)
 - incompatible with Visual C++, but should work with minor tweaks (see above)

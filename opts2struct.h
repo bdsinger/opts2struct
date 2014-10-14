@@ -1,5 +1,7 @@
 /*
-  opts2struct.h
+opts2struct.h
+
+part of opts2struct project: https://github.com/bdsinger/opts2struct
 
 The MIT License (MIT)
 
@@ -27,42 +29,42 @@ SOFTWARE.
 #ifndef H_OPTS2STRUCT
 #define H_OPTS2STRUCT
 
-#include <stdlib.h>
-#include <string.h>
-
-#define OPTS2STRUCT(argc, argv, opts...)                                       \
+#define OPTS2STRUCT(opts...)                                                   \
   enum { opts, nopts };                                                        \
-  typedef struct {                                                             \
-    char names[nopts][256];                                                    \
+  struct opts2struct_t {                                                       \
     union {                                                                    \
+      int v[nopts];                                                            \
       struct {                                                                 \
         int opts;                                                              \
       };                                                                       \
-      int v[nopts];                                                            \
     };                                                                         \
-  } opts2struct_t;                                                             \
-  opts2struct_t ops2s;                                                         \
-  do {                                                                         \
-    char *word, *ctx, *space, tmp[256], *optstring = #opts;                    \
-    strcpy(tmp, optstring);                                                    \
-    int j, i = 0;                                                              \
-    for (word = strtok_r(tmp, ",", &ctx); word;                                \
-         word = strtok_r(NULL, ",", &ctx)) {                                   \
-      strcpy(ops2s.names[i++],                                                 \
-             (space = strrchr(word, ' ')) ? space + 1 : word);                 \
-    }                                                                          \
-    for (j = 0; j < nopts; ++j)                                                \
-      ops2s.v[j] = OPTS2EMPTY;                                                 \
-    for (i = 1; i < argc; ++i) {                                               \
-      for (j = 0; j < nopts; ++j) {                                            \
-        if (strstr(argv[i], ops2s.names[j])) {                                 \
-          ops2s.v[j] = atoi(strrchr(argv[i], '=') + 1);                        \
-          break;                                                               \
-        }                                                                      \
-      }                                                                        \
-    }                                                                          \
-  } while (0)
+    const char *names[nopts];                                                  \
+  };                                                                           \
+  static inline const char *opts2s_allopts(void) { return #opts; }
 
-#define OPTS2EMPTY -999
+/*
+ * must include your particular OPTS2STRUCT macro call here:
+ *    - below OPTS2STRUCT definition
+ *                &&
+ *    - above opts2struct_* function prototypes
+ */
+
+#include "myopts2struct.h"
+
+/**
+ *  opts2struct_create creates an opts2struct as customized in myopts2struct.h
+ *  @return struct opts2struct_t*
+ */
+struct opts2struct_t *opts2struct_create(void);
+
+/**
+ *  opts2struct_parseopts parses argv into an initialized opts2struct
+ *
+ *  @param optstruct created and initialized by opts2struct_create()
+ *  @param argc      number of command line arguments from your main()
+ *  @param argv      command line arguments from your main()
+ */
+void opts2struct_parseopts(struct opts2struct_t *optstruct, int argc,
+                           const char *argv[]);
 
 #endif // H_OPTS2STRUCT
