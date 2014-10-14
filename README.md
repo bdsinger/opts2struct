@@ -41,7 +41,7 @@ then the following will be automatically generated:
     static inline const char *opts2s_allopts(void) { return "stars, bunnies, dogs"; }
 
 
-the `opts2s_allopts()` function is split by `opts2struct_create()` when filling out the `names[]` array
+the `opts2s_allopts()` function returns the stringified options, split by `opts2struct_create()` when filling out the `names[]` array
 
 after calling `opts2struct_create()` you'll have the following set:
     
