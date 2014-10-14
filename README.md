@@ -11,7 +11,7 @@ A short C macro and two helper functions for creating an opts struct from argv
 
     `struct opts2struct_t *ops2s = opts2struct_create();`
 
-    `opts2struct_parseopts(myopts, argc, argv);`
+    `opts2struct_parseopts(ops2s, argc, argv);`
 
 Technical details
 -----------------
