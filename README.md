@@ -1,7 +1,7 @@
 opts2struct
 ===========
 
-A short C macro and two helper functions for creating an opts struct from argv
+A short C macro with helper functions for creating an opts struct from argv
 
 - Step 1: provide your option names in `myopts2struct.h`
 
