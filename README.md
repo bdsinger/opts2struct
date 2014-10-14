@@ -86,7 +86,7 @@ Limitations:
 opts2struct is intentionally simple, and is not meant to replace [getopt](http://en.wikipedia.org/wiki/Getopt): 
 - the values are limited to ints
 - must have equal sign separating key and value
-- not spaces (`--bunnies 7` won't work)
+- not spaces (`-bunnies 7` won't work)
 - no mechanism for default values
     - but you can check for items set to OPTS2EMPTY, meaning unset, then set them to defaults
 - opts are matched if they form __any substring__ of __any element of argv[]__!
