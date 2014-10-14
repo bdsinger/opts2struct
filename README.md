@@ -5,19 +5,19 @@ A short C macro and two helper functions for creating an opts struct from argv
 
 - step 1: provide your option names in `myopts2struct.h`
 
-    OPTS2STRUCT(key1, key2, key3, ...);
+    `OPTS2STRUCT(key1, key2, key3, ...)`
 
 - step 2: call helper functions to initialize and then parse `argv[]`:
 
-    struct opts2struct_t *ops2s = opts2struct_create();
-    opts2struct_parseopts(myopts, argc, argv);
+    `struct opts2struct_t *ops2s = opts2struct_create();`
+    `opts2struct_parseopts(myopts, argc, argv);`
 
 technical details
 -----------------
 
 provided you have edited `myopts2struct.h` to contain:
 
-    OPTS2STRUCT(stars, bunnies, dogs);
+    OPTS2STRUCT(stars, bunnies, dogs)
 
 then the following will be automatically generated:
 
@@ -41,7 +41,7 @@ then the following will be automatically generated:
     static inline const char *opts2s_allopts(void) { return "stars, bunnies, dogs"; }
 
 
-    - the opts2s_allopts() function is split by opts2struct_create() when filling out the names[] array
+the `opts2s_allopts()` function is split by `opts2struct_create()` when filling out the `names[]` array
 
 after calling `opts2struct_create()` you'll have the following set:
     
