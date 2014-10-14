@@ -130,6 +130,7 @@ opts2struct is intentionally simple, and is not meant to replace [getopt](http:/
 - must have equal sign separating key and value
 - not spaces (`--bunnies 7` won't work)
 - no mechanism for default values
+    - but you can check for items set to OPTS2EMPTY, meaning unset, then set them to defaults
 - opts are matched if they are a subset of args: assumes unique word args
 - no attempt to differentiate between option and non-option area of command-line (ie no `--`)
 - no flag support (ie no `-a -b` or `-ab`)
