@@ -43,10 +43,24 @@ SOFTWARE.
   static inline const char *opts2s_allopts(void) { return #opts; }
 
 /*
- * must include your particular OPTS2STRUCT macro call here:
+ * must include your particular "myopts2struct.h" here
  *    - below OPTS2STRUCT definition
  *                &&
  *    - above opts2struct_* function prototypes
+ *
+ *    it must contain at least these 2 types of lines:
+ *       OPTS2STRUCT(structfield1,structfield2,...,structfieldN)
+ *       #define OPTS2EMPTY -9999
+ *
+ *    where the name and number of the struct fields are up to you, and
+ *    the value of OPTS2EMPTY is up to you but:
+ *         - must be an int, and
+ *         - must be a value that the user would never set for any field
+ *
+ *    see "myopts2struct.h.example"
+ *
+ *   (note that .gitignore is set to ignore "myopts2struct.h" since it is
+ *    in essence a config file: user- and project- specific)
  */
 
 #include "myopts2struct.h"
