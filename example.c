@@ -31,31 +31,32 @@ SOFTWARE.
 
 /* IMPORTANT:
  * the names of the struct fields here *must match those you set up in
- * myopts2struct.h!
+ * myopts2struct.h! This example assumes:
+ *
+ *   OPTS2STRUCT(stars, bunnies, dogs)
  */
 
 int main(int argc, const char *argv[]) {
 
-  /* run command-line like so (order of key-value pairs not important, and
-     the only restriction on values is that they be integers):
+  /*
+   command line examples
+
+   WORKS :
 
    command stars=100 bunnies=7 dogs=4
+   command -stars=100 --bunnies=7 dogs
+   command  bunnies=brown stars=4.5 -nodogs
+   command  -bunnies stars=4.5
+   command --stars bunnies=2 thiswillbeignored
 
-   Note that the current version of the parsing code in opts2struct.c just
-   looks for the opts name *within* the command line arguments, so you should
-   use unambiguous option names that do not include any other arguments as
-   substrings!
-
-   WON'T WORK:
-    command s=1 k=2 ss=4
-
-       -> because both "s" and "ss" contain an "s"!
 
    WON'T WORK:
-    command bunnies 10 dogs 4000
 
-       -> because an equals sign '=' must be used to set the value,
-          not spaces!
+   command bunnies 10 dogs 4000
+   command -bunnies 10 --dogs 4000
+
+  ->because an equals sign '=' must be used to set the value,
+        not spaces!
 
    */
 
