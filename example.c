@@ -64,17 +64,36 @@ int main(int argc, const char *argv[]) {
 
   printf("in a loop:\n");
   for (int i = 0; i < nopts; ++i) {
-    printf("%s : %d\n", ops2s->names[i], ops2s->v[i]);
+    printf("%s : ", ops2s->names[i]);
+    switch (ops2s->argtypes[i]) {
+    case opts2s_argtype_bool:
+      printf("%s (bool)", ops2s->v[i]);
+      break;
+    case opts2s_argtype_cstringarg:
+      printf("%s (string)", ops2s->v[i]);
+      break;
+    case opts2s_argtype_intarg:
+      printf("%d (int)", ops2s->i[i]);
+      break;
+    case opts2s_argtype_floatarg:
+      printf("%f (float)", ops2s->f[i]);
+      break;
+    default:
+      printf("unknown argtype %d!", ops2s->argtypes[i]);
+      break;
+    }
+    printf("\n");
   }
+
   printf("\nusing struct fields:\n");
-  printf("stars: %d\n", ops2s->stars);
-  printf("bunnies: %d\n", ops2s->bunnies);
-  printf("dogs: %d\n", ops2s->dogs);
+  printf("stars: %s\n", ops2s->stars);
+  printf("bunnies: %s\n", ops2s->bunnies);
+  printf("dogs: %s\n", ops2s->dogs);
 
   printf("\nusing enums in array:\n");
-  printf("stars: %d\n", ops2s->v[stars]);
-  printf("bunnies: %d\n", ops2s->v[bunnies]);
-  printf("dogs: %d\n", ops2s->v[dogs]);
+  printf("stars: %s\n", ops2s->v[stars]);
+  printf("bunnies: %s\n", ops2s->v[bunnies]);
+  printf("dogs: %s\n", ops2s->v[dogs]);
 
   return 0;
 }

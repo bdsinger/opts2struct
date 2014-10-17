@@ -29,18 +29,41 @@ SOFTWARE.
 #ifndef H_OPTS2STRUCT
 #define H_OPTS2STRUCT
 
+typedef const char *opts2s_cstring;
+typedef enum {
+  opts2s_argtype_bool,
+  opts2s_argtype_intarg,
+  opts2s_argtype_floatarg,
+  opts2s_argtype_cstringarg,
+  opts2s_argtype_numargtypes
+} opts2s_argtype_t;
+
 #define OPTS2STRUCT(opts...)                                                   \
   enum { opts, nopts };                                                        \
   struct opts2struct_t {                                                       \
     union {                                                                    \
-      int v[nopts];                                                            \
-      struct {                                                                 \
+      int i[nopts];                                                            \
+      struct as_int {                                                          \
         int opts;                                                              \
       };                                                                       \
     };                                                                         \
+    union {                                                                    \
+      float f[nopts];                                                          \
+      struct as_float {                                                        \
+        float opts;                                                            \
+      };                                                                       \
+    };                                                                         \
+    union {                                                                    \
+      opts2s_cstring v[nopts];                                                 \
+      struct {                                                                 \
+        opts2s_cstring opts;                                                   \
+      };                                                                       \
+    };                                                                         \
     const char *names[nopts];                                                  \
+    opts2s_argtype_t argtypes[nopts];                                          \
+    int found[nopts];                                                          \
   };                                                                           \
-  static inline const char *opts2s_allopts(void) { return #opts; }
+  static const char *opts2s_allopts = #opts;
 
 /*
  * must include your particular "myopts2struct.h" here
