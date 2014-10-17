@@ -49,7 +49,7 @@ Limitations:
 - probably incompatible with Visual C++, but should work with minor tweaks
     - `opts2struct.h` uses [named variadic macros](https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html#Variadic-Macros) (a GNU extension to C99 always-named-`__VA_ARGS__` variadic macros) and [anonymous structs and unions](https://gcc.gnu.org/onlinedocs/gcc/Unnamed-Fields.html), which are part of the C11 standard and a GNU extension prior to that (for unions anyway).
 
-The following limitations apply to the supplied helper functions, which are provided for convenience only:
+The following limitations apply to the helper functions:
 
 - requires equal sign separating key and value, not spaces (so `-pillows=7`works, but `-pillows 7` will not)
 - no mechanism for default values
