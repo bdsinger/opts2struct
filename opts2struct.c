@@ -89,7 +89,6 @@ void opts2struct_parseopts(struct opts2struct_t *optstruct, int argc,
       stringvalue = &argv[i][k + 1];
       char *firstbad = NULL;
       intvalue = (int)strtol(stringvalue, &firstbad, 10);
-      floatvalue = (float)OPTS2EMPTY;
       if (firstbad != NULL && *firstbad != '\0') {
         floatvalue = strtof(stringvalue, &firstbad);
         argtype = (firstbad == stringvalue) ? opts2s_argtype_cstringarg
