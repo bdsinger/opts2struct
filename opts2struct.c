@@ -52,7 +52,7 @@ struct opts2struct_t *opts2struct_create(void) {
 }
 
 void opts2struct_parseopts(struct opts2struct_t *optstruct, int argc,
-                           const char *argv[]) {
+                           char *argv[]) {
   char key[MAXARGLEN];
   const char *stringvalue;
   for (int i = 0; i < argc; ++i) {
