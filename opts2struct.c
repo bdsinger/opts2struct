@@ -58,7 +58,7 @@ void opts2struct_parseopts(struct opts2struct_t *optstruct, int argc,
   for (int i = 0; i < argc; ++i) {
     // const char *stringvalue = strrchr(argv[i], '=');
     size_t arglen = OPT2S_MIN(strlen(argv[i]), MAXARGLEN);
-    int k = 0;
+    size_t k = 0;
     while (k < arglen && argv[i][k] == '-') {
       ++k;
     }
