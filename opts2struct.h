@@ -43,15 +43,15 @@ typedef enum {
   struct opts2struct_t {                                                       \
     union {                                                                    \
       int i[nopts];                                                            \
-      struct as_int {                                                          \
+      struct {                                                                 \
         int opts;                                                              \
-      };                                                                       \
+      } as_int;                                                                \
     };                                                                         \
     union {                                                                    \
       float f[nopts];                                                          \
-      struct as_float {                                                        \
+      struct {                                                                 \
         float opts;                                                            \
-      };                                                                       \
+      } as_float;                                                              \
     };                                                                         \
     union {                                                                    \
       opts2s_cstring v[nopts];                                                 \
