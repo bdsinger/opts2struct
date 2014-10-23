@@ -26,6 +26,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "opts2struct.h"
@@ -33,38 +35,82 @@ SOFTWARE.
 #define MAXARGLEN 256
 #define OPT2S_MIN(x, y) ((x < y) ? x : y)
 
-struct opts2struct_t *opts2struct_create(void) {
-  static char *opts2s_allopts_dup = NULL;
-  if (opts2s_allopts_dup == NULL) {
-    opts2s_allopts_dup = strdup(opts2s_allopts);
-  }
-  char *optstring = opts2s_allopts_dup;
+static char **opts2struct_splitstring(const char *cstring, const char *sep) {
+  char *dupstring = strdup(cstring);
+  char **splitarray = malloc(nopts * sizeof(char *));
 
-  struct opts2struct_t *optstruct = malloc(sizeof(struct opts2struct_t));
-  memset(optstruct->found, 0, nopts * sizeof(int));
   char *word, *ctx, *space;
   int i = 0;
-  for (word = strtok_r(optstring, ",", &ctx); word;
-       word = strtok_r(NULL, ",", &ctx)) {
-    optstruct->names[i++] = (space = strrchr(word, ' ')) ? space + 1 : word;
+  for (word = strtok_r(dupstring, sep, &ctx); word;
+       word = strtok_r(NULL, sep, &ctx)) {
+    assert(i < nopts);
+    splitarray[i++] = (space = strrchr(word, ' ')) ? space + 1 : word;
   }
-  return optstruct;
+  return splitarray;
 }
 
-void opts2struct_parseopts(struct opts2struct_t *optstruct, int argc,
-                           char *argv[]) {
+struct opts2struct_t *opts2struct_create(void) {
+  struct opts2struct_t *opts2struct = malloc(sizeof(struct opts2struct_t));
+  memset(opts2struct->found, 0, nopts * sizeof(int));
+  char **names = opts2struct_splitstring(opts2s_allopts, ",");
+  for (int i = 0; i < nopts; ++i) {
+    opts2struct->names[i] = names[i];
+  }
+  free(names);
+  return opts2struct;
+}
+
+static char **opts2struct_argv_filled(struct opts2struct_t *ops2s,
+                                      const int argc, const char *argv[]) {
+  char **defaults = opts2struct_splitstring(opts2s_alldefaults, ",");
+  int *optindex = malloc(nopts * sizeof(int));
+  int foundopts = 0;
+  for (int i = 0; i < nopts; ++i) {
+    size_t longestmatch = 0;
+    optindex[i] = OPTS2EMPTY;
+    for (int j = 0; j < argc; ++j) {
+      char *first = strstr(argv[j], ops2s->names[i]);
+      if (first) {
+        size_t match = first - ops2s->names[i];
+        if (match > longestmatch) {
+          longestmatch = match;
+          optindex[i] = j;
+          ++foundopts;
+        }
+      }
+    }
+  }
+  int skip_args = argc - foundopts;
+  char **argv_filled = malloc((nopts + skip_args) * sizeof(char *));
+  for (int i = 0; i < nopts; ++i) {
+    if (OPTS2EMPTY == optindex[i]) {
+      argv_filled[i] =
+          malloc(strlen(defaults[i]) + strlen(ops2s->names[i]) + 2);
+      sprintf(argv_filled[i], "%s=%s", ops2s->names[i], defaults[i]);
+      ops2s->v[i] = defaults[i];
+    } else {
+      argv_filled[i] = strdup(argv[optindex[i]]);
+    }
+  }
+  free(optindex);
+  return argv_filled;
+}
+
+void opts2struct_parseopts(struct opts2struct_t *optstruct, const int argc,
+                           const char *argv[]) {
+  char **new_argv = opts2struct_argv_filled(optstruct, argc, argv);
   char key[MAXARGLEN];
   const char *stringvalue;
-  for (int i = 0; i < argc; ++i) {
-    // const char *stringvalue = strrchr(argv[i], '=');
-    size_t arglen = OPT2S_MIN(strlen(argv[i]), MAXARGLEN);
+  // TODO: only need one loop. Leftover from when had no defaults, used argc
+  for (int i = 0; i < nopts; ++i) {
+    size_t arglen = OPT2S_MIN(strlen(new_argv[i]), MAXARGLEN);
     size_t k = 0;
-    while (k < arglen && argv[i][k] == '-') {
+    while (k < arglen && new_argv[i][k] == '-') {
       ++k;
     }
     int m = 0;
-    while (k < arglen && argv[i][k] != '=') {
-      key[m++] = argv[i][k++];
+    while (k < arglen && new_argv[i][k] != '=') {
+      key[m++] = new_argv[i][k++];
     }
     key[m] = '\0';
 
@@ -86,7 +132,7 @@ void opts2struct_parseopts(struct opts2struct_t *optstruct, int argc,
       }
       floatvalue = (float)intvalue;
     } else {
-      stringvalue = &argv[i][k + 1];
+      stringvalue = &new_argv[i][k + 1];
       char *firstbad = NULL;
       intvalue = (int)strtol(stringvalue, &firstbad, 10);
       if (firstbad != NULL && *firstbad != '\0') {

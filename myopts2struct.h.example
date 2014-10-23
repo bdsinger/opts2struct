@@ -10,6 +10,7 @@
  *
  */
 OPTS2STRUCT(stars, bunnies, dogs)
+OPTS2DEFAULTS(3.5, 3, "brown")
 
 /**
  *  OPTS2EMPTY: the value used to initialize options before parsing argv[]

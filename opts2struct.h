@@ -65,17 +65,23 @@ typedef enum {
   };                                                                           \
   static const char *opts2s_allopts = #opts;
 
+#define OPTS2DEFAULTS(opts_defaults...)                                        \
+  static const char *opts2s_alldefaults = #opts_defaults;
+
 /*
  * must include your particular "myopts2struct.h" here
  *    - below OPTS2STRUCT definition
  *                &&
  *    - above opts2struct_* function prototypes
  *
- *    it must contain at least these 2 types of lines:
+ *    it must contain at least these 3 types of lines:
  *       OPTS2STRUCT(structfield1,structfield2,...,structfieldN)
+ *       OPTS2DEFAULTS(default1,default2,...,defaultN)
  *       #define OPTS2EMPTY -9999
  *
  *    where the name and number of the struct fields are up to you, and
+ *    the number of defaults should match the number of fields.
+ *
  *    the value of OPTS2EMPTY is up to you but:
  *         - must be an int, and
  *         - must be a value that the user would never set for any field
@@ -100,8 +106,9 @@ struct opts2struct_t *opts2struct_create(void);
  *  @param optstruct created and initialized by opts2struct_create()
  *  @param argc      number of command line arguments from your main()
  *  @param argv      command line arguments from your main()
+ *
  */
-void opts2struct_parseopts(struct opts2struct_t *optstruct, int argc,
-                           char *argv[]);
+void opts2struct_parseopts(struct opts2struct_t *optstruct, const int argc,
+                           const char *argv[]);
 
 #endif // H_OPTS2STRUCT
