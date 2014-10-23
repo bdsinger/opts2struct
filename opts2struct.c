@@ -36,7 +36,15 @@ SOFTWARE.
 #define OPT2S_MIN(x, y) ((x < y) ? x : y)
 
 static char **opts2struct_splitstring(const char *cstring, const char *sep) {
-  char *dupstring = strdup(cstring);
+  char *dupstring = calloc(strlen(cstring) + 1, 1);
+  char *cptr = (char *)cstring, *dptr = dupstring;
+  while (*cptr != '\0') {
+    if (*cptr != '\'' && *cptr != '"') {
+      *dptr = *cptr;
+      ++dptr;
+    }
+    ++cptr;
+  }
   char **splitarray = malloc(nopts * sizeof(char *));
 
   char *word, *ctx, *space;
