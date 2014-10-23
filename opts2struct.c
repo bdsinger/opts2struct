@@ -86,8 +86,22 @@ static char **opts2struct_argv_filled(struct opts2struct_t *ops2s,
     if (OPTS2EMPTY == optindex[i]) {
       argv_filled[i] =
           malloc(strlen(defaults[i]) + strlen(ops2s->names[i]) + 2);
-      sprintf(argv_filled[i], "%s=%s", ops2s->names[i], defaults[i]);
-      ops2s->v[i] = defaults[i];
+      const char *no, *equals, *def;
+      if (!strcmp(defaults[i], "true")) {
+        no = "";
+        equals = "";
+        def = "";
+      } else if (!strcmp(defaults[i], "false")) {
+        no = "no";
+        equals = "";
+        def = "";
+      } else {
+        no = "";
+        equals = "=";
+        def = defaults[i];
+      }
+      sprintf(argv_filled[i], "%s%s%s%s", no, ops2s->names[i], equals, def);
+
     } else {
       argv_filled[i] = strdup(argv[optindex[i]]);
     }
@@ -117,7 +131,7 @@ void opts2struct_parseopts(struct opts2struct_t *optstruct, const int argc,
     opts2s_argtype_t argtype = opts2s_argtype_numargtypes;
     int intvalue;
     float floatvalue;
-    int is_flag = (k == arglen);
+    int is_flag = (k == m);
     if (is_flag) {
       argtype = opts2s_argtype_bool;
       if ('n' == key[0] && 'o' == key[1]) {
