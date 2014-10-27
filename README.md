@@ -1,14 +1,16 @@
 opts2struct
 ===========
 
-A short C macro with helper functions for creating an opts struct from argv
+A C macro with helper functions for creating an opts struct from argv
 
 Usage
 -----
 
-- Step 1: provide your option names in `myopts2struct.h`:
+- Step 1: provide your option names, defaults, and short names in `myopts2struct.h`:
 
-    `OPTS2STRUCT(key1, key2, key3, ...)`
+    `OPTS2STRUCT(key1, key2, key3, ... , keyN)`
+    `OPTS2STRUCT(default_val1, default_val2, default_val3, ..., default_valN)`
+    `OPTS2STRUCT(shortkey1, shortkey2, shortkey3, ..., shortkeyN)`
 
     - this file is treated as a config file and is in .gitignore so it isn't tracked.
     - make a copy of `myopts2struct.h.example` to start. Note that you also need to set `OPTS2EMPTY` in there. 
@@ -25,9 +27,9 @@ Usage
 Details
 -------
 
-After calling `opts2struct_create()` in Step 2 above, you'll have auto-generated structure field names in `ops2s`, as well as `enum`s matching the names of your keys for accessing the same options using an array. You'll also have a `names[]` array containing your field names as C strings.
+After calling `opts2struct_create()` in Step 2 above, you'll have auto-generated structure field names in `ops2s`, as well as `enum`s matching the names of your keys for accessing the same options using an array. You'll also have `names[]`, `defaults[]`, and `shortnames[]` arrays containing your field names, defaults, and shortnames as C strings.
 
-After supplying `opts2struct_parseopts()` with the argv C string array of `--key=value`, `--key`, or `--nokey` items (there can be 0 or more dashes to start the key name within the input)  you'll have:
+After supplying `opts2struct_parseopts()` with the argv C string array of `--key=value`, `--key`, or `--nokey` items (there can be 0 or more dashes to start the key name within the input) or `-k value`, `-k true`, or `-nok` you'll have:
 
 - `ops2s->found[]` to see which options were found on the command line
 - `ops2s->argtypes[]` to get their type (C string, integer, floating point, or boolean in the case of `--[no]key`)

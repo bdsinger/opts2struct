@@ -82,10 +82,11 @@ typedef enum {
  *    it must contain at least these 3 types of lines:
  *       OPTS2STRUCT(structfield1,structfield2,...,structfieldN)
  *       OPTS2DEFAULTS(default1,default2,...,defaultN)
+ *       OPTS2SHORTNAMES(sname1,sname2,...,snameN)
  *       #define OPTS2EMPTY -9999
  *
  *    where the name and number of the struct fields are up to you, and
- *    the number of defaults should match the number of fields.
+ *    the number of defaults & shortnames must match the number of fields.
  *
  *    the value of OPTS2EMPTY is up to you but:
  *         - must be an int, and
@@ -101,6 +102,8 @@ typedef enum {
 
 /**
  *  opts2struct_create creates an opts2struct as customized in myopts2struct.h
+ *  and splits allopts, alldefaults, and allshortnames into:
+ *     opts2struct->names[], ->defaults, and ->shortnames[] resp.
  *  @return struct opts2struct_t*
  */
 struct opts2struct_t *opts2struct_create(void);
