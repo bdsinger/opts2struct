@@ -7,10 +7,22 @@
  *  OPTS2STRUCT(<comma-separated keys>) : set your options here. The
  *                         OPTS2STRUCT macro in opts2struct.h will
  *                         auto-generate a structure definition from it.
+ *                         argv format: "[--]key=value"
  *
  */
 OPTS2STRUCT(stars, bunnies, dogs)
+
+/**
+*  OPTS2DEFAULTS(<comma-separated values>) : set default values here
+*/
 OPTS2DEFAULTS(3.5, 3, "brown")
+
+/**
+*  OPTS2SHORTNAMES(<comma-separated short keys>) : set short names for
+*                           your options here.
+*                           argv format:  "-key value"
+*/
+OPTS2SHORTNAMES(-s, -b, -d)
 
 /**
  *  OPTS2EMPTY: the value used to initialize options before parsing argv[]

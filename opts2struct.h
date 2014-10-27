@@ -60,6 +60,8 @@ typedef enum {
       };                                                                       \
     };                                                                         \
     const char *names[nopts];                                                  \
+    const char *defaults[nopts];                                               \
+    const char *shortnames[nopts];                                             \
     opts2s_argtype_t argtypes[nopts];                                          \
     int found[nopts];                                                          \
   };                                                                           \
@@ -67,6 +69,9 @@ typedef enum {
 
 #define OPTS2DEFAULTS(opts_defaults...)                                        \
   static const char *opts2s_alldefaults = #opts_defaults;
+
+#define OPTS2SHORTNAMES(snames...)                                             \
+  static const char *opts2s_allshortnames = #snames;
 
 /*
  * must include your particular "myopts2struct.h" here

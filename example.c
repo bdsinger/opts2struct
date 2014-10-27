@@ -58,10 +58,15 @@ int main(const int argc, const char *argv[]) {
   ->because an equals sign '=' must be used to set the value,
         not spaces!
 
+   WORKS WITH SHORTNAMES:
+
+   command -b 10 -d 4000
+
+   if the shortnames are "-b" and "-d" for "bunnies" and "dogs", resp.
    */
 
   struct opts2struct_t *ops2s = opts2struct_create();
-  opts2struct_parseopts(ops2s, argc, argv);
+  opts2struct_parseopts(ops2s, argc - 1, &argv[1]);
 
   printf("in a loop:\n");
   for (int i = 0; i < nopts; ++i) {

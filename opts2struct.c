@@ -32,46 +32,61 @@ SOFTWARE.
 #include <string.h>
 #include "opts2struct.h"
 
-#define MAXARGLEN 256
-#define OPT2S_MIN(x, y) ((x < y) ? x : y)
+#ifndef OPTS2STRUCT
+#error OPTS2STRUCT not defined!
+#endif
 
-static char **opts2struct_splitstring(const char *cstring, const char *sep,
-                                      const char *removechars) {
-  // get a copy of input string without the
-  // undesirable characters (quotes, mainly)
-  char **splitarray = NULL;
-  char *dupstring = NULL;
-  size_t nremove = strlen(removechars);
-  size_t nunsplit = strlen(cstring);
-  if (nunsplit > 0) {
-    dupstring = malloc(strlen(cstring));
+static inline int empty_or_null(const char *str) {
+  return (str == NULL || 0 == strlen(str));
+}
 
-    int k = 0;
-    for (size_t i = 0; i < nunsplit; ++i) {
-      int skip = 0;
-      for (size_t j = 0; j < nremove; ++j) {
-        if (cstring[i] == removechars[j]) {
-          skip = 1;
-          break;
-        }
-      }
-      if (skip)
-        continue;
-      dupstring[k++] = cstring[i];
-    }
-    dupstring[k] = '\0';
-
-    // split the copy at the given separator and return
-    splitarray = malloc(nopts * sizeof(char *));
-    char *word, *ctx, *space;
-    int i = 0;
-    for (word = strtok_r(dupstring, sep, &ctx); word;
-         word = strtok_r(NULL, sep, &ctx)) {
-      assert(i < nopts);
-      splitarray[i++] = (space = strrchr(word, ' ')) ? space + 1 : word;
-    }
+static inline void free_before_setting(const char **ptr, const char *setting) {
+  if (NULL != *ptr) {
+    free((void *)*ptr);
   }
-  return splitarray;
+  *ptr = setting;
+}
+
+static void opts2struct_splitstring_info(const char *instring,
+                                         const int nsubstr, size_t *posinfo,
+                                         size_t *leninfo, const char *evensep,
+                                         const char *oddsep) {
+  assert(instring);
+  assert(posinfo);
+  assert(leninfo);
+
+  // default sep: a comma-delimited, possibly-quoted,
+  // possibly-space-containing instring
+  const char *defaultsep = ",'\" ";
+  const char *myeven = (NULL == evensep) ? defaultsep : evensep;
+  const char *myodd = (NULL == oddsep) ? myeven : oddsep;
+
+  int pos = 0;
+  for (int i = 0; i < nsubstr; i++) {
+    const char *thissep = (i % 2) ? myodd : myeven;
+    size_t skip = strspn(&instring[pos], thissep);
+    pos += skip;
+    posinfo[i] = pos;
+    leninfo[i] = strcspn(&instring[pos], thissep);
+    pos += leninfo[i];
+  }
+}
+
+static void opts2struct_strings_from_info(const char *instring,
+                                          const int nsubstr,
+                                          const size_t *posinfo,
+                                          const size_t *leninfo,
+                                          char **outstrings) {
+  assert(instring);
+  assert(posinfo);
+  assert(leninfo);
+  assert(outstrings);
+
+  for (int i = 0; i < nsubstr; i++) {
+    outstrings[i] = malloc(leninfo[i] + 1);
+    strncpy(outstrings[i], &instring[posinfo[i]], leninfo[i]);
+    outstrings[i][leninfo[i]] = '\0';
+  }
 }
 
 struct opts2struct_t *opts2struct_create(void) {
@@ -79,71 +94,107 @@ struct opts2struct_t *opts2struct_create(void) {
   struct opts2struct_t *opts2struct = malloc(sizeof(struct opts2struct_t));
   memset(opts2struct->found, 0, nopts * sizeof(int));
 
-  // parse the option names
-  char **names = opts2struct_splitstring(opts2s_allopts, ",", "\"'-");
-  for (int i = 0; i < nopts; ++i) {
-    opts2struct->names[i] = names[i];
-  }
-  free(names);
+  size_t posinfo[nopts];
+  size_t leninfo[nopts];
+
+  // load the names
+  opts2struct_splitstring_info(opts2s_allopts, nopts, posinfo, leninfo,
+                               ",'\" -", NULL);
+  opts2struct_strings_from_info(opts2s_allopts, nopts, posinfo, leninfo,
+                                (char **)opts2struct->names);
+
+  // load the defaults, if any
+  opts2struct_splitstring_info(opts2s_alldefaults, nopts, posinfo, leninfo,
+                               NULL, NULL);
+  opts2struct_strings_from_info(opts2s_alldefaults, nopts, posinfo, leninfo,
+                                (char **)opts2struct->defaults);
+
+  // load the short names, if any
+  opts2struct_splitstring_info(opts2s_allshortnames, nopts, posinfo, leninfo,
+                               ",'\" -", NULL);
+  opts2struct_strings_from_info(opts2s_allshortnames, nopts, posinfo, leninfo,
+                                (char **)opts2struct->shortnames);
+
   return opts2struct;
 }
 
 void opts2struct_parseopts(struct opts2struct_t *optstruct, const int argc,
                            const char *argv[]) {
-  // load the defaults
-  char **defaults = opts2struct_splitstring(opts2s_alldefaults, ",", "\"'");
+  int *argmatched = calloc(argc, sizeof(int));
 
   // set the values from either argv or defaults or set OPTS2EMPTY
-  for (int i = 0; i < nopts; ++i) {
-    int hasdefault = (NULL != defaults[i]);
+  for (int i = 0; i < nopts; i++) {
+    int hasdefault = (NULL != optstruct->defaults[i]);
 
     // go through argv
-    char key[MAXARGLEN];
-    strcpy(key, optstruct->names[i]);
-
     const char *stringvalue = NULL;
     opts2s_argtype_t argtype = opts2s_argtype_numargtypes;
     int intvalue = OPTS2EMPTY;
     float floatvalue = (float)OPTS2EMPTY;
     int negflag = 0;
 
-    for (int j = 0; j < argc; ++j) {
-      char **keyvaluepair = opts2struct_splitstring(argv[j], "=", "\"'-");
-      char *argkey = keyvaluepair[0];
-      stringvalue = keyvaluepair[1];
-
+    char *keyvaluepair[2];
+    for (int j = 0; j < argc; j++) {
+      if (argmatched[j]) {
+        continue;
+      }
       // see if this option was on command line
+      size_t posinfo[nopts];
+      size_t leninfo[nopts];
+      opts2struct_splitstring_info(argv[j], 2, posinfo, leninfo, "=\"'-",
+                                   "=\"'");
+      opts2struct_strings_from_info(argv[j], 2, posinfo, leninfo, keyvaluepair);
+      const char *argkey = keyvaluepair[0];
+      stringvalue = keyvaluepair[1];
+      // flag check
       int offset = 0;
-      if ((NULL == stringvalue) && argkey[0] == 'n' && argkey[1] == 'o') {
+      if (empty_or_null(stringvalue) && argkey[0] == 'n' && argkey[1] == 'o') {
         negflag = 1;
         offset = 2;
       }
-      if (!strcmp(&argkey[offset], key)) {
+      // short name check
+      if (argv[j][0] == '-' && !strcmp(&argkey[offset], optstruct->shortnames[i])) {
+        if (negflag) {
+          stringvalue = "false";
+        } else {
+          stringvalue = argv[j + 1];
+        }
         optstruct->found[i] = 1;
+        argmatched[j] = 1;
         break;
       }
+      // name check
+      if (!strcmp(&argkey[offset], optstruct->names[i])) {
+        optstruct->found[i] = 1;
+        argmatched[j] = 1;
+        break;
+      }
+      free((void *)argkey);
+      free_before_setting(&stringvalue, NULL);
       negflag = 0;
     }
 
     if (0 == optstruct->found[i] && hasdefault) {
-      stringvalue = defaults[i];
+      free_before_setting(&stringvalue, optstruct->defaults[i]);
     }
 
     // if key has no value, is prob a flag but
     // check defaults (if any) since flag=true is a valid default setting
-    int novalue = (NULL == stringvalue);
+    int novalue = empty_or_null(stringvalue);
     int is_flag = novalue || negflag || !strcmp(stringvalue, "true") ||
                   !strcmp(stringvalue, "false");
     if (is_flag) {
       argtype = opts2s_argtype_bool;
       if (negflag) {
         intvalue = 0;
-        if (novalue)
-          stringvalue = "false";
+        if (novalue) {
+          free_before_setting(&stringvalue, "false");
+        }
       } else {
         intvalue = 1;
-        if (novalue)
-          stringvalue = "true";
+        if (novalue) {
+          free_before_setting(&stringvalue, "true");
+        }
       }
       floatvalue = (float)intvalue;
     } else {
@@ -164,4 +215,5 @@ void opts2struct_parseopts(struct opts2struct_t *optstruct, const int argc,
     optstruct->i[i] = intvalue;
     optstruct->f[i] = floatvalue;
   }
+  free((void *)argmatched);
 }

@@ -35,11 +35,23 @@ After supplying `opts2struct_parseopts()` with the argv C string array of `--key
 - `ops2s->f[]` and `ops2s->as_float->` to access floatingpoint-valued options (as well as pre-promoted integers and booleans)
 - `ops2s->v[]` and `ops2s->` to access values in their original string form, split off from argv (or `true` and `false` in the case of boolean flag input)
 
+Defaults and Short Names
+--------
+    `OPTS2DEFAULTS(default1, default2, ..., defaultN)` and
+    `OPTS2SHORTNAMES(shortname1, shortname2, ..., shortnameN)`
+
+- allow setting default values for keys not provided by user
+- shortnames can be provided with spaces rather than equal signs between key and value
+    - e.g., `-s 3` (the single hyphen is required, unlike the key=value form)
+- `N` above must be equal to the number of options in the `OPTS2STRUCT` macro
+- all three macro settings should be made in `myopts2struct.h`
 
 Example
 ------
 
 See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.c) file for an example.
+
+Run `make test` to run a set of different command-line invocations, demontrating defaults, short names, and bool flags.
 
 
 Limitations:
@@ -51,8 +63,13 @@ Limitations:
 
 The following limitations apply to the helper functions:
 
-- requires equal sign separating key and value, not spaces (so `-pillows=7`works, but `-pillows 7` will not)
-- no mechanism for default values
-    - but you can check for items set to OPTS2EMPTY, or check the `found` list, and set any unset values to defaults
-- no attempt to differentiate between option and non-option area of command-line (ie no `--`)
+- no attempt to differentiate between option and non-option area of command-line (ie no `--`), 
+  but args not listed in OPTS2STRUCT macro will be ignored
+- required supplying default values and shortnames, and creates static global counterparts
+    - the only way to bypass them is to ifdef out the lines that refer to them
+    - next todo item is different levels of "buy-in"
+- workaround: just copy the OPTS2STRUCT macro to a new file and use that alone
+    - perhaps remove the fields for names, defaults, and shortnames if not desired
+    - do your own parsing etc.
+ 
 
