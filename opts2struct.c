@@ -30,6 +30,7 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "opts2struct_utils.h"
 #include "opts2struct.h"
 
 #ifndef OPTS2STRUCT
@@ -45,48 +46,6 @@ static inline void free_before_setting(const char **ptr, const char *setting) {
     free((void *)*ptr);
   }
   *ptr = setting;
-}
-
-static void opts2struct_splitstring_info(const char *instring,
-                                         const int nsubstr, size_t *posinfo,
-                                         size_t *leninfo, const char *evensep,
-                                         const char *oddsep) {
-  assert(instring);
-  assert(posinfo);
-  assert(leninfo);
-
-  // default sep: a comma-delimited, possibly-quoted,
-  // possibly-space-containing instring
-  const char *defaultsep = ",'\" ";
-  const char *myeven = (NULL == evensep) ? defaultsep : evensep;
-  const char *myodd = (NULL == oddsep) ? myeven : oddsep;
-
-  int pos = 0;
-  for (int i = 0; i < nsubstr; i++) {
-    const char *thissep = (i % 2) ? myodd : myeven;
-    size_t skip = strspn(&instring[pos], thissep);
-    pos += skip;
-    posinfo[i] = pos;
-    leninfo[i] = strcspn(&instring[pos], thissep);
-    pos += leninfo[i];
-  }
-}
-
-static void opts2struct_strings_from_info(const char *instring,
-                                          const int nsubstr,
-                                          const size_t *posinfo,
-                                          const size_t *leninfo,
-                                          char **outstrings) {
-  assert(instring);
-  assert(posinfo);
-  assert(leninfo);
-  assert(outstrings);
-
-  for (int i = 0; i < nsubstr; i++) {
-    outstrings[i] = malloc(leninfo[i] + 1);
-    strncpy(outstrings[i], &instring[posinfo[i]], leninfo[i]);
-    outstrings[i][leninfo[i]] = '\0';
-  }
 }
 
 struct opts2struct_t *opts2struct_create(void) {
@@ -141,8 +100,8 @@ void opts2struct_parseopts(struct opts2struct_t *optstruct, const int argc,
       // see if this option was on command line
       size_t posinfo[nopts];
       size_t leninfo[nopts];
-      opts2struct_splitstring_info(argv[j], 2, posinfo, leninfo, "=\"'-",
-                                   "=\"'");
+      opts2struct_splitstring_info(argv[j], 2, posinfo, leninfo, "=\"'- ",
+                                   "=\"' ");
       opts2struct_strings_from_info(argv[j], 2, posinfo, leninfo, keyvaluepair);
       const char *argkey = keyvaluepair[0];
       stringvalue = keyvaluepair[1];
@@ -153,7 +112,8 @@ void opts2struct_parseopts(struct opts2struct_t *optstruct, const int argc,
         offset = 2;
       }
       // short name check
-      if (argv[j][0] == '-' && !strcmp(&argkey[offset], optstruct->shortnames[i])) {
+      if (argv[j][0] == '-' &&
+          !strcmp(&argkey[offset], optstruct->shortnames[i])) {
         if (negflag) {
           stringvalue = "false";
         } else {
