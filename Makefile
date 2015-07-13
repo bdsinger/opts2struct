@@ -1,10 +1,15 @@
+all: test
+
+copy_opts:
+	cp myopts2struct.h.example myopts2struct.h
+	
 example: example.c opts2struct.c opts2struct.h myopts2struct.h
 	cc -Wall -std=c11 -o $@ *.c
 	@echo "make test to see different ways to invoke $@"
 clean:
-	rm -f *.o *~ example
+	rm -f *.o *~ example myopts2struct.h
 
-test: example
+test: copy_opts example
 	@echo "*****************************************"
 	@echo --- Form "[-*]key=value"  ---
 	@echo can use 0 or more hyphens on key=value
