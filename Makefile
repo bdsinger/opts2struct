@@ -53,3 +53,6 @@ test: copy_opts example
 	@echo "*****************************************"
 	./example -nob -s 300 -d cockapoo
 	@echo "*****************************************"
+	@echo "remove myopts2struct.h so you can use yours"
+	rm -f myopts2struct.h
+	@echo "*****************************************"
