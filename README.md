@@ -9,8 +9,11 @@ Usage
 - Step 1: provide your option names, defaults, and short names in `myopts2struct.h`:
 
     `OPTS2STRUCT(key1, key2, key3, ... , keyN)`
+    
     `OPTS2STRUCT(default_val1, default_val2, default_val3, ..., default_valN)`
+    
     `OPTS2STRUCT(shortkey1, shortkey2, shortkey3, ..., shortkeyN)`
+    
 
     - this file is treated as a config file and is in .gitignore so it isn't tracked.
     - make a copy of `myopts2struct.h.example` to start. Note that you also need to set `OPTS2EMPTY` in there. 
@@ -53,7 +56,7 @@ Example
 
 See the [example.c](https://github.com/bdsinger/opts2struct/blob/master/example.c) file for an example.
 
-Run `make test` to run a set of different command-line invocations, demontrating defaults, short names, and bool flags.
+Run `make test` to run a set of different command-line invocations, demonstrating defaults, short names, and bool flags.
 
 
 Limitations:
